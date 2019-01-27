@@ -51,7 +51,7 @@ class MainVerticle : AbstractVerticle() {
             it.response()
                 .putHeader(HttpHeaders.CACHE_CONTROL, "no-cache")
                 .setStatusCode(200)
-                .sendFile(mIndex[Random.nextInt(mIndex.size - 0 + 1) + 0])
+                .sendFile(mIndex[Random.nextInt(mIndex.size)])
         }
         server.requestHandler(router)
         CompositeFuture.all(Future.future<Any> {
