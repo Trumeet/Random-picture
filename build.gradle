@@ -1,0 +1,37 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+group 'moe.yuuta'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    def vertxVersion = "3.6.0"
+    compile "io.vertx:vertx-core:$vertxVersion"
+    compile "io.vertx:vertx-web:$vertxVersion"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+shadowJar {
+    baseName = 'server'
+    classifier = null
+    version = this.version
+    manifest {
+        attributes(
+                'Main-Class': "io.vertx.core.Launcher",
+                "Main-Verticle": "moe.yuuta.randompicture.MainVerticle"
+        )
+    }
+}
