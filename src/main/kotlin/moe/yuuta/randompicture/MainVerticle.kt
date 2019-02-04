@@ -56,8 +56,9 @@ class MainVerticle : AbstractVerticle() {
         server.requestHandler(router)
         CompositeFuture.all(Future.future<Any> {
             logger.info("Indexing images")
+            val startTime = System.currentTimeMillis()
             index(pathFile)
-            logger.info("Done, size: ${mIndex.size}")
+            logger.info("Done, size: ${mIndex.size}, took ${System.currentTimeMillis() - startTime} ms")
             it.complete()
         }, Future.future<HttpServer> { server.listen(PORT, it) })
             .setHandler {
