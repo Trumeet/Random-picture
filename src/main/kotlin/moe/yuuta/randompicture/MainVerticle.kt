@@ -56,21 +56,7 @@ class MainVerticle : AbstractVerticle() {
         server.requestHandler(router)
         CompositeFuture.all(Future.future<Any> {
             logger.info("Indexing images")
-            pathFile.listFiles { dir, name ->
-                if (!File(dir, name).isFile) {
-                    logger.warn("Ignoring folder $name")
-                    return@listFiles false
-                }
-                for (acceptableName in ACCEPTABLE_FILES) {
-                    if (name.toLowerCase().endsWith(acceptableName.toLowerCase())) {
-                        return@listFiles true
-                    }
-                }
-                logger.warn("Ignoring unacceptable file $name")
-                return@listFiles false
-            }.toList()
-                .stream()
-                .forEach { file -> mIndex.add(file.absolutePath) }
+            index(pathFile)
             logger.info("Done, size: ${mIndex.size}")
             it.complete()
         }, Future.future<HttpServer> { server.listen(PORT, it) })
@@ -78,5 +64,30 @@ class MainVerticle : AbstractVerticle() {
             if (it.succeeded()) startFuture.complete()
             else startFuture.fail(it.cause())
         }
+    }
+
+    private fun index(rootFolder: File) {
+        rootFolder.listFiles { dir, name ->
+            if (!File(dir, name).isFile) {
+                // Remain to the result so it will be entered later
+                return@listFiles true
+            }
+            for (acceptableName in ACCEPTABLE_FILES) {
+                if (name.toLowerCase().endsWith(acceptableName.toLowerCase())) {
+                    return@listFiles true
+                }
+            }
+            logger.warn("Ignoring unacceptable file $name")
+            return@listFiles false
+        }.toList()
+            .stream()
+            .forEach { file ->
+                if (file.isFile) {
+                    mIndex.add(file.absolutePath)
+                } else {
+                    logger.info("Entering folder ${file.absolutePath}")
+                    index(file)
+                }
+            }
     }
 }
