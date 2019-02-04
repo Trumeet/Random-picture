@@ -6,7 +6,7 @@ Display a picture of your favourite list randomly.
 
 You need Docker installed first, then:
 
-* Pick your favourite pictures and copy them into a folder, like:
+* Pick your favourite pictures and copy them into a folder (sub-folders are supported), like:
   
   ```shell
     ~/Pictures $ ls -l
