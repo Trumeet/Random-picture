@@ -12,6 +12,7 @@ import io.vertx.ext.web.Router
 import java.io.File
 import kotlin.random.Random
 
+@Suppress("unused")
 class MainVerticle : AbstractVerticle() {
     companion object {
         const val ENV_PATH = "RP_PATH"
